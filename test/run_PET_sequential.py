@@ -13,7 +13,6 @@ import numpy as np
 from tqdm import tqdm
 from algo.PET import LinkPredict
 from tensorboardX import SummaryWriter
-from torchmetrics import AUROC
 from utils import SequentialDataloader, config
 from utils.utils import *
 
@@ -65,7 +64,7 @@ def main(args):
     for epoch in range(args.epochs):
         # Training and validation
         model.train()
-        train_loss, metric = [], AUROC()
+        train_loss = []
         train_auc = []
         with tqdm(total=len(train_loader), dynamic_ncols=True) as t:
             for step, batch in enumerate(train_loader):
@@ -77,7 +76,7 @@ def main(args):
                 # compute loss
                 tr_loss = criterion(logits, label.float())
                 train_loss.append(tr_loss.item())
-                tr_auc = metric(logits, label)
+                tr_auc = evaluate_auc(logits.detach().cpu().numpy()[: label.shape[0]], label.detach().cpu().numpy())
                 train_auc.append(tr_auc)
 
                 # backward
@@ -107,7 +106,8 @@ def main(args):
 
         model.eval()
         with torch.no_grad():
-            validate_loss, metric = [], AUROC()
+            validate_loss = []
+            validate_auc = []
             with tqdm(total=len(test_loader), dynamic_ncols=True) as t:
                 for step, batch in enumerate(test_loader):
                     g, label = batch
@@ -116,8 +116,9 @@ def main(args):
                     logits = model(g)
                     # compute loss
                     val_loss = criterion(logits, label.float())
-                    val_auc = metric(logits, label)
+                    val_auc = evaluate_auc(logits.detach().cpu().numpy()[: label.shape[0]], label.detach().cpu().numpy())
                     validate_loss.append(val_loss.item())
+                    validate_auc.append(val_auc)
                     
                     t.update()
                     t.set_description(desc=f'Epoch: {epoch}/{args.epochs}')
