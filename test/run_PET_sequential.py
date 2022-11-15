@@ -99,7 +99,7 @@ def main(args):
                     log_file.write("Epoch {}, step {}/{}, train loss: {:.4f}\n".format(epoch, step, len(train_loader), tr_loss))
 
         train_loss = np.mean(train_loss)
-        train_auc = metric.compute().item()
+        train_auc = np.mean(train_auc)
         log_file.write("Epoch {}, train loss: {}, train auc: {}\n".format(epoch, train_loss, train_auc))
 
         decay.step()
@@ -128,7 +128,7 @@ def main(args):
                     })
 
             validate_loss = np.mean(validate_loss)
-            validate_auc = metric.compute().item()
+            validate_auc = np.mean(validate_auc)
 
             eval_writer.add_scalar("eval_loss", validate_loss, train_iter)
             eval_writer.add_scalar("eval_auc", validate_auc, train_iter)
