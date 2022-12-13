@@ -42,6 +42,7 @@ wget https://s3.us-west-2.amazonaws.com/dgl-data/dataset/tmall-ret.zip
 For raw datasets, you can download from the links in the paper, or start from the joined tabular files:
 ```bash
 wget https://s3.us-west-2.amazonaws.com/dgl-data/dataset/joined_tabulars.zip
+```
 
 ## Run
 Under the test folder:
