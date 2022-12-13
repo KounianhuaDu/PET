@@ -44,6 +44,8 @@ For raw datasets, you can download from the links in the paper, or start from th
 wget https://s3.us-west-2.amazonaws.com/dgl-data/dataset/joined_tabulars.zip
 ```
 
+You can split the tabulars yourself into search_pool.csv, target_train.csv, target_test.csv. In PET, we split the dataset according to the timestamp, for example: before 11.11, after 11.11...
+
 ## Run
 Under the test folder:
 
