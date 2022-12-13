@@ -112,9 +112,9 @@ class queryGen(object):
         self.target_data = pd.read_csv(target_file, sep=',', index_col=False, header=None)
         # self.target_data = pd.DataFrame(np.load(target_file))
         self.query_data = self.target_data[self.query_c_pos].apply(lambda l: ','.join(map(str, l)), 1).values
-        print(self.target_data.head(10))
-        print(self.query_data[:10])
-        exit(-1)
+        #print(self.target_data.head(10))
+        #print(self.query_data[:10])
+        #exit(-1)
         self.sync_id_data = self.target_data[self.sync_c_pos].values.astype(str)
         self.dataset_size = len(self.target_data)
         

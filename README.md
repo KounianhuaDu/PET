@@ -39,12 +39,27 @@ For processed dataset, you can download via:
 wget https://s3.us-west-2.amazonaws.com/dgl-data/dataset/tmall-ret.zip
 ```
 
-For raw datasets, you can download from the links in the paper, or start from the joined tabular files:
-```bash
-wget https://s3.us-west-2.amazonaws.com/dgl-data/dataset/joined_tabulars.zip
-```
+## Preparing your own datasets
 
-You can split the tabulars yourself into search_pool.csv, target_train.csv, target_test.csv. In PET, we split the dataset according to the timestamp, for example: before 11.11, after 11.11...
+To run with your own datasets, you need to prepare `search_pool.csv`, `target_train.csv` and `target_test.csv`
+yourself in the folder `data/custom` similar to the link above.  We describe the concrete requirements as follows.
+
+`search_pool.csv`, `target_train.csv` and `target_test.csv` should have the same columns, representing the
+search pool, the training set and the test set respectively.  Moreover,
+
+* Each file should not contain CSV headers.
+* Each column should only contain categorical values encoded as integers.  The same integer in the same column
+  in all three tables refer to the same categorical value.
+* The last column represents the row label, which should be always binary (i.e. 0 or 1).
+
+Once done, you can run
+
+```bash
+python insert_es.py --dataset custom
+python pre_search_new.py --dataset custom
+# or you can specify which subset of columns to compute the similarity metric like following
+python pre_search_new.py --dataset custom --query-columns 0,1,2,3
+```
 
 ## Run
 Under the test folder:
@@ -68,3 +83,4 @@ python run_PET_rec.py --dataset ml-1m --batch_size 100
 python run_PET_rec.py --dataset lastfm --batch_size 500
 ```
 
+If you prepared the custom datasets as above, supply `custom` in the `--dataset` option.
