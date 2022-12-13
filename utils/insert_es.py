@@ -28,7 +28,7 @@ def merge_pool_file(base_folder, format, update_pool=False):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--dataset', type=str, choices=['avazu', 'criteo', 'alipay', 'taobao', 'tmall'])
+    parser.add_argument('--dataset', type=str, choices=['avazu', 'criteo', 'alipay', 'taobao', 'tmall', 'custom'])
     parser.add_argument('--update-pool', action='store_true', default=False)
     args = parser.parse_args()
     
@@ -37,7 +37,8 @@ if __name__ == "__main__":
         'criteo': 32,
         'tmall': 0,
         'taobao': 0,
-        'alipay': 0
+        'alipay': 0,
+        'custom': 0,
     }
     
     format = {
@@ -45,7 +46,8 @@ if __name__ == "__main__":
         'criteo': '.txt',
         'tmall': '.csv',
         'taobao': '.csv',
-        'alipay': '.csv'
+        'alipay': '.csv',
+        'custom': '.csv',
     }
     
     feateng_folder = {
@@ -54,6 +56,7 @@ if __name__ == "__main__":
         'tmall': 'feateng_data',
         'taobao': 'feateng_data',
         'alipay': 'feateng_data',
+        'custom': '.',
     }
     
     base_folder = os.path.join('../data', args.dataset, feateng_folder[args.dataset])
