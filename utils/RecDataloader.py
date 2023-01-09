@@ -18,7 +18,7 @@ class Collator(object):
         return batch_graphs, batch_labels
 
 def load_data(dataset, batch_size, num_workers=8, path='../data', include_val=False):
-    path = os.path.join(path, dataset, 'feateng_data')
+    path = os.path.join(path, dataset, 'feateng_data' if dataset != 'custom' else '')
 
     target_train = os.path.join(path, 'target_train.csv')
     train_knn_neighbors = os.path.join(path, 'search_res_col_train.txt')
@@ -38,6 +38,8 @@ def load_data(dataset, batch_size, num_workers=8, path='../data', include_val=Fa
         used_fields = np.arange(7)
     elif dataset == 'lastfm':
         used_fields = np.asarray([0, 2, 5, 6, 7, 8])
+    elif dataset == 'custom':
+        used_fields = np.arange(retrieve_pool.shape[1])
     else:
         raise NotImplementedError
         
