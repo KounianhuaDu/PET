@@ -42,10 +42,13 @@ wget https://s3.us-west-2.amazonaws.com/dgl-data/dataset/tmall-ret.zip
 ## Preparing your own datasets
 
 To run with your own datasets, you need to prepare `search_pool.csv`, `target_train.csv` and `target_test.csv`
+(and optionally `target_val.csv` if you need validation set)
 yourself in the folder `data/custom` similar to the link above.  We describe the concrete requirements as follows.
 
-`search_pool.csv`, `target_train.csv` and `target_test.csv` should have the same columns, representing the
-search pool, the training set and the test set respectively.  Moreover,
+`search_pool.csv`, `target_train.csv` and `target_test.csv`
+(and optionally `target_val.csv`)
+should have the same columns, representing the
+search pool, the training set and the test set (and optionally the validation set) respectively.  Moreover,
 
 * Each file should not contain CSV headers.
 * Each column should only contain categorical values encoded as integers.  The same integer in the same column

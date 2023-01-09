@@ -90,9 +90,13 @@ if __name__ == "__main__":
     merge_files(base_folder, format[args.dataset], args.update_target)
     
     target_train_file = os.path.join(base_folder, 'target_train' + format[args.dataset])
+    target_val_file = os.path.join(base_folder, 'target_val' + format[args.dataset])
     target_test_file = os.path.join(base_folder, 'target_test' + format[args.dataset])
+
+    has_val = os.path.exists(target_val_file)
     
     search_res_col_train_file = os.path.join(base_folder, f'search_res_col_train_{args.ret_size}.txt')
+    search_res_col_val_file = os.path.join(base_folder, f'search_res_col_val_{args.ret_size}.txt')
     search_res_col_test_file = os.path.join(base_folder, f'search_res_col_test_{args.ret_size}.txt')
 
     # query generator
@@ -102,10 +106,16 @@ if __name__ == "__main__":
         with open(os.path.join(base_folder, 'target_train' + format[args.dataset])) as f:
             l = f.readline().strip().split(',')
             query_cols = ','.join([str(i) for i in range(len(l) - 1)])
+
     query_generator_train = queryGen(target_train_file,
                                      args.batch_size,
                                      sync_c_pos[args.dataset],
                                      query_cols)
+    if has_val:
+        query_generator_val = queryGen(target_val_file,
+                                         args.batch_size,
+                                         sync_c_pos[args.dataset],
+                                         query_cols)
     query_generator_test = queryGen(target_test_file,
                                     args.batch_size,
                                     sync_c_pos[args.dataset],
@@ -117,6 +127,13 @@ if __name__ == "__main__":
                     es_reader,
                     search_res_col_train_file,
                     args.dataset in sequential_datasets)
+
+    if has_val:
+        print('target val pre searching...')
+        pre_search_rim(query_generator_val,
+                        es_reader,
+                        search_res_col_val_file,
+                        args.dataset in sequential_datasets)
     
     print('target test pre searching...')
     pre_search_rim(query_generator_test,

@@ -39,8 +39,13 @@ def main(args):
         device = 'cpu'
 
     #step 2: Load data 
-    train_loader, test_loader = RecDataloader.load_data(
-        args.dataset, args.batch_size, args.num_workers, args.data_path)
+    if use_val:
+        train_loader, val_loader, test_loader = RecDataloader.load_data(
+            args.dataset, args.batch_size, args.num_workers, args.data_path, include_val=True)
+    else:
+        train_loader, test_loader = RecDataloader.load_data(
+            args.dataset, args.batch_size, args.num_workers, args.data_path, include_val=False)
+        val_loader = test_loader
     print('Data loaded.')
     log_file.write('Data loaded.\n')
     
@@ -64,12 +69,12 @@ def main(args):
     log_file.write('Start training.\n')
     kill_cnt = 0
     
-    def eval():
+    def eval(loader):
         model.eval()
         with torch.no_grad():
             validate_loss, preds, target_ids, metric = [], [], [], AUROC()
-            with tqdm(total=len(test_loader), dynamic_ncols=True) as t:
-                for g, label in test_loader:
+            with tqdm(total=len(loader), dynamic_ncols=True) as t:
+                for g, label in loader:
                     g, label = g.to(device), label.to(device)
                     logits = model(g)
                     # compute loss
@@ -96,7 +101,7 @@ def main(args):
             return validate_loss, validate_auc, hr_1, hr_5, hr_10, ndcg_5, ndcg_10, mrr
     
     train_iter, early_stop = 0, False
-    loss, auc, hr_1, hr_5, hr_10, ndcg_5, ndcg_10, mrr = eval()
+    loss, auc, hr_1, hr_5, hr_10, ndcg_5, ndcg_10, mrr = eval(val_loader)
                 
     print("Val Loss: {:.5}, Val AUC: {:.5}, Val HR@1: {:.5}, Val HR@5: {:.5}, Val HR@10: {:.5}, Val NDCG@5: {:.5}, Val NDCG@10: {:.5}, Val MRR: {:.5}\n".\
             format(loss, auc, hr_1, hr_5, hr_10, ndcg_5, ndcg_10, mrr))
@@ -134,7 +139,7 @@ def main(args):
                 log_file.write('Epoch {}, step {}/{}, train loss: {:.4f}\n'.format(epoch, step, len(train_loader), train_loss[-1]))
             
             if (step + 1) % (len(train_loader) // 2) == 0:
-                loss, auc, hr_1, hr_5, hr_10, ndcg_5, ndcg_10, mrr = eval()
+                loss, auc, hr_1, hr_5, hr_10, ndcg_5, ndcg_10, mrr = eval(val_loader)
     
                 #validate
                 test_mrrs.append(mrr)
@@ -168,7 +173,7 @@ def main(args):
     
     # test use the best model
     model.load_state_dict(torch.load(os.path.join(args.out_path, args.model+'_'+args.dataset+'_'+str(args.num))))
-    test_loss, test_auc, hr_1, hr_5, hr_10, ndcg_5, ndcg_10, mrr = eval()
+    test_loss, test_auc, hr_1, hr_5, hr_10, ndcg_5, ndcg_10, mrr = eval(test_loader)
     
     print("Test Loss: {:.5}\nTest AUC: {:.5}\nTest HR@1: {:.5}\nTest HR@5: {:.5}\nTest HR@10: {:.5}\nTest NDCG@5: {:.5}\nTest NDCG@10: {:.5}\nMRR: {:.5}\n".\
         format(test_loss, test_auc, hr_1, hr_5, hr_10, ndcg_5, ndcg_10, mrr))
@@ -207,6 +212,7 @@ if __name__ == '__main__':
     parser.add_argument("--early_stop", default=3, type=int, help="Patience for early stop.")
 
     parser.add_argument("--dropout", default=0.0, type=float, help="Dropout.")
+    parser.add_argument("--use_val", action='store_true', help='Use validation set')
 
     args = parser.parse_args()
 
