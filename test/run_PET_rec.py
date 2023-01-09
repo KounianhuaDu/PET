@@ -39,7 +39,7 @@ def main(args):
         device = 'cpu'
 
     #step 2: Load data 
-    if use_val:
+    if args.use_val:
         train_loader, val_loader, test_loader = RecDataloader.load_data(
             args.dataset, args.batch_size, args.num_workers, args.data_path, include_val=True)
     else:
