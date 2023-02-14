@@ -69,13 +69,13 @@ Under the test folder:
 
 For CTR task, run:
 ```bash
-python run_PET_sequential.py --dataset tmall --in_size 16 --lr 5e-4 --wd 1e-4 --batch_size 100
+python run_PET_sequential.py --dataset tmall --in_size 16 --lr 5e-4 --wd 1e-4 --batch_size 512
 ```
 ```bash
-python run_PET_sequential.py --dataset taobao --in_size 16 --lr 1e-4 --wd 5e-4 --batch_size 200
+python run_PET_sequential.py --dataset taobao --in_size 16 --lr 1e-4 --wd 5e-4 --batch_size 512
 ```
 ```bash
-python run_PET_sequential.py --dataset alipay --in_size 32 --lr 5e-4 --wd 5e-4 --batch_size 100
+python run_PET_sequential.py --dataset alipay --in_size 32 --lr 5e-4 --wd 5e-4 --batch_size 512
 ```
 
 For top-N recommendation task:
